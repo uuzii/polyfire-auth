@@ -9,6 +9,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-app.html">
 <link rel="import" href="shared-styles.html">
 
 <dom-module id="my-view1">
@@ -21,15 +26,78 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
 
+    <firebase-app
+      auth-domain="salgo-49922.firebaseapp.com"
+      database-url="https://salgo-49922.firebaseio.com/"
+      api-key=" AIzaSyBxVwwgqoOmb34DFGYloxP2-bxCODI5acs">
+    </firebase-app>
+
+    <firebase-auth 
+      id="auth" 
+      user="{{user}}" 
+      provider="google">
+    </firebase-auth>
+
+    <firebase-query
+      id="query"
+      path="/users/[[user.uid]]/notes"
+      data="{{notes}}">
+    </firebase-query>
+
     <div class="card">
       <h1>Firebase auth</h1>
-      <my-login></my-login>
+      <template is="dom-if" if="[[user]]">
+        <h1>Welcome [[user.displayName]]</h1>
+
+        <div id="card">
+          <div id="notes">
+            <ul id="notes-list">
+              <template is="dom-repeat" items="[[notes]]" as="note">
+                <li>
+                  <p class="content">[[note.content]]</p>
+                </li>
+              </template>
+            </ul>
+
+            <paper-input id="input" label="Nota"></paper-input>
+            <div id="notes-controls">
+              <paper-button id="add" ont-tap="add">Añadir</paper-button>
+            </div>
+          </div>
+        </div>
+      </template>
+      
+      <paper-button raised on-tap="login" hidden$="[[user]]">Sign in</paper-button>
+      <paper-button raised on-tap="logout" hidden$="[[!user]]">Sign out</paper-button>
     </div>
   </template>
 
   <script>
     Polymer({
       is: 'my-view1',
+      properties: {
+        user: {
+          type: Object
+        },
+        statusKnow: {
+          type: Object
+        },
+        notes: {
+          type: Object
+        }
+      },
+      login: function() {
+        return this.$.auth.signInWithPopup();
+      },
+      logout: function() {
+        return this.$.auth.signOut();
+      },
+      add: function() {
+        this.$.query.ref.push({
+          content: this.$.input.value
+        });
+        this.input.value = null;
+      }
     });
   </script>
 </dom-module>

@@ -1,6 +1,5 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
-<link rel="import" href="../bower_components/polymerfire/firebase-auth.html">
-<link rel="import" href="../bower_components/paper-button/paper-button.html">
+
 <link rel="import" href="shared-styles.html">
 
 <dom-module id="my-login">
@@ -11,38 +10,13 @@
       }
     </style>
 
-    <firebase-auth 
-      id="auth" 
-      user="{{user}}" 
-      provider="google">
-    </firebase-auth>
-
-    <template is="dom-if" if="[[user]]">
-      <h1>Welcome [[user.displayName]]</h1>
-    </template>
-    
-    <paper-button raised on-tap="login" hidden$="[[user]]">Sign in</paper-button>
-    <paper-button raised on-tap="logout" hidden$="[[!user]]">Sign out</paper-button>
     
   </template>
 
   <script>
     Polymer({
       is: 'my-login',
-      properties: {
-        user: {
-          type: Object
-        },
-        statusKnow: {
-          type: Object
-        }
-      },
-      login: function() {
-        return this.$.auth.signInWithPopup();
-      },
-      logout: function() {
-        return this.$.auth.signOut();
-      }
+      
     });
   </script>
 </dom-module>
